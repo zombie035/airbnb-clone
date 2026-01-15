@@ -295,3 +295,4 @@ This project is built to demonstrate full-stack development skills.
 ---
 
 <!-- CodeRabbit review trigger -->
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/zombie035/airbnb-clone?utm_source=oss&utm_medium=github&utm_campaign=zombie035%2Fairbnb-clone&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)

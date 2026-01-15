@@ -199,26 +199,48 @@ http://localhost:3000
 
 ---
 
-📸 Screens / Pages Included
+## 📸 Screenshots / Pages Included
 
-Home Page
+### 🏠 Home Page
+<img src="https://github.com/user-attachments/assets/a18b056e-9ad7-4b2b-a8dc-0f4037b34cd6" width="350" />
 
-Login & Signup
+### 🔐 Login & Signup
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9d83f64e-4de7-4753-b902-3bb80302d887" width="350" />
+  <img src="https://github.com/user-attachments/assets/c7894be7-6911-4d6d-9fae-d949513d2927" width="350" />
+</p>
 
-Home Listing Page
+### 🏘️ Home Listing Page
+<img src="https://github.com/user-attachments/assets/88b46f2c-e4e0-445c-b208-7c0b9592b84c" width="350" />
 
-Home Detail Page
+### 🏡 Home Detail Page
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d0ca4aa7-2b8c-4804-a85a-4a5bb4b2686d" width="350" />
+  <img src="https://github.com/user-attachments/assets/73fecb3b-9692-42f0-8bf7-35a11a53d8d4" width="350" />
+  <img src="https://github.com/user-attachments/assets/0e65e53a-bf7d-4afb-841d-e17a232a5fcd" width="350" />
+</p>
 
-Reservation Page
+### 📅 Reservation Page
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bfa8a908-eb49-48d1-a010-f6099bfd0915" width="350" />
+  <img src="https://github.com/user-attachments/assets/fc07201e-e44f-4b97-b786-c780d68d848c" width="350" />
+  <img src="https://github.com/user-attachments/assets/aa8cbb98-7f6e-49e4-90f2-aba4484f28df" width="350" />
+</p>
 
-Booking Success Page
+### ✅ Booking Success Page
+<img src="https://github.com/user-attachments/assets/a2eba57d-5849-4e92-9e9f-376a5e3b4001" width="350" />
 
-Favourite Homes Page
+### ❤️ Favourite Homes
+<img src="https://github.com/user-attachments/assets/c74db24e-0879-4d2d-8cc6-6112f554479f" width="350" />
 
-Host Dashboard
+### 🧑‍💼 Host Dashboard
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1e757a86-b13b-48ca-b044-084c0da4b78f" width="350" />
+  <img src="https://github.com/user-attachments/assets/fb87994f-0707-48c3-9aff-0ae3e117005d" width="350" />
+</p>
 
-404 Error Page
-
+### ❌ 404 Error Page
+<img src="https://github.com/user-attachments/assets/fc0d1876-f86d-429e-84a2-66a9e7241797" width="350" />
 
 
 ---

@@ -1,0 +1,158 @@
+<%- include('../partials/head') %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      min-height: 100vh;
+    }
+    .input-transition {
+      transition: all 0.2s ease-in-out;
+    }
+    /* Custom radio styling for User Type */
+    .user-type-card:has(input:checked) {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+      color: #b91c1c;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 antialiased">
+  <%- include('../partials/nav') %>
+  
+  <main class="container mx-auto my-12 p-4">
+    <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+      
+      <div class="h-2 bg-red-500"></div>
+
+      <div class="p-8">
+        <header class="text-center mb-8">
+          <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Create Your Account</h1>
+          <p class="text-gray-500 mt-2">Join our community and start your journey</p>
+        </header>
+        
+        <form action="/signup" method="POST" class="space-y-5">
+          <%- include('../partials/errors') %>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="firstName" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 ml-1">First Name</label>
+              <div class="relative group">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400 group-focus-within:text-red-500 transition-colors">
+                  <i class="fas fa-user text-sm"></i>
+                </span>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  placeholder="John"
+                  value="<%= oldInput.firstName ? oldInput.firstName : '' %>"
+                  class="input-transition w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-gray-800"
+                  required />
+              </div>
+            </div>
+            
+            <div>
+              <label for="lastName" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 ml-1">Last Name</label>
+              <div class="relative group">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400 group-focus-within:text-red-500 transition-colors">
+                  <i class="fas fa-user text-sm"></i>
+                </span>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value="<%= oldInput.lastName ? oldInput.lastName : '' %>"
+                  placeholder="Doe"
+                  class="input-transition w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-gray-800" />
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 ml-1">Email Address</label>
+            <div class="relative group">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400 group-focus-within:text-red-500 transition-colors">
+                <i class="fas fa-envelope text-sm"></i>
+              </span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value="<%= oldInput.email ? oldInput.email : '' %>"
+                placeholder="your.email@example.com"
+                class="input-transition w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-gray-800"
+                required />
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 ml-1">Password</label>
+              <div class="relative group">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400 group-focus-within:text-red-500 transition-colors">
+                  <i class="fas fa-lock text-sm"></i>
+                </span>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  class="input-transition w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-gray-800"
+                  required/>
+              </div>
+            </div>
+            
+            <div>
+              <label for="confirmPassword" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 ml-1">Confirm Password</label>
+              <div class="relative group">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400 group-focus-within:text-red-500 transition-colors">
+                  <i class="fas fa-lock text-sm"></i>
+                </span>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="••••••••"
+                  class="input-transition w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-gray-800"
+                  required/>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100">
+            <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">I want to register as:</p>
+            <div class="flex gap-4">
+              <label class="user-type-card flex-1 flex items-center justify-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer transition-all hover:bg-white">
+                <input type="radio" name="userType" value="guest" id="guest" class="hidden" checked="<%= oldInput.userType === 'guest' %>" />
+                <span class="font-medium">Guest</span>
+              </label>
+              <label class="user-type-card flex-1 flex items-center justify-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer transition-all hover:bg-white">
+                <input type="radio" name="userType" value="host" id="host" class="hidden" checked="<%= oldInput.userType === 'host' %>"/>
+                <span class="font-medium">Host</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="px-1">
+            <label class="inline-flex items-center cursor-pointer group">
+              <input type="checkbox" name="terms" id="terms" class="w-4 h-4 text-red-500 border-gray-300 rounded focus:ring-red-500" required />
+              <span class="ml-3 text-sm text-gray-600">
+                I agree to the <a href="#" class="text-red-500 font-semibold hover:underline">Terms & Conditions</a>
+              </span>
+            </label>
+          </div> 
+
+          <button type="submit" class="w-full group relative flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 shadow-lg shadow-red-500/30 active:scale-[0.98]">
+            <span>Create Account</span>
+            <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+          </button>
+          
+          <p class="text-center mt-6 text-gray-500 text-sm">
+            Already have an account? <a href="/login" class="font-bold text-red-500 hover:text-red-600 hover:underline transition">Log in</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

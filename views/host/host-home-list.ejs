@@ -1,0 +1,89 @@
+<%- include('../partials/head') %>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+  body { font-family: 'Inter', sans-serif; color: #222222; background-color: #f7f7f7; }
+  .text-brand { color: #FF385C; }
+  .bg-brand { background-color: #FF385C; }
+  .hover-bg-brand:hover { background-color: #E31C5F; }
+</style>
+</head>
+
+<body class="bg-[#F7F7F7] min-h-screen flex flex-col">
+  <%- include('../partials/nav') %>
+
+  <main class="container mx-auto mt-10 mb-20 px-4 max-w-6xl flex-grow">
+    
+    <div class="flex justify-between items-end mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Your Listings</h1>
+        <p class="text-gray-500 mt-2">Manage the homes you are hosting on Airbnb.</p>
+      </div>
+      <a href="/host/add-home" class="hidden md:inline-flex items-center justify-center px-5 py-3 bg-brand text-white font-bold rounded-lg shadow-md hover-bg-brand transition transform active:scale-95">
+        <i class="fas fa-plus mr-2"></i> Create new listing
+      </a>
+    </div>
+
+    <% if (registeredHomes.length > 0) { %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% registeredHomes.forEach(home => { %>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col">
+            
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img 
+                src="/<%= home.photo %>" 
+                alt="<%= home.houseName %>" 
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              >
+              <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold shadow-sm">
+                <i class="fas fa-star text-yellow-500 mr-1"></i><%= home.rating %>
+              </div>
+            </div>
+
+            <div class="p-5 flex-grow flex flex-col justify-between">
+              <div>
+                <h3 class="text-lg font-bold text-gray-900 leading-tight mb-1 truncate"><%= home.houseName %></h3>
+                <p class="text-sm text-gray-500 flex items-center mb-4">
+                  <i class="fas fa-map-marker-alt text-brand mr-2"></i> <%= home.location %>
+                </p>
+                
+                <div class="text-sm font-medium text-gray-900 mb-4">
+                  Rs <%= home.price %> <span class="text-gray-400 font-normal">/ night</span>
+                </div>
+              </div>
+
+              <div class="flex gap-3 mt-auto pt-4 border-t border-gray-100">
+                <a href="/host/edit-home/<%= home._id %>?editing=true" 
+                   class="flex-1 text-center py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-bold text-sm hover:bg-gray-50 transition">
+                   Edit
+                </a>
+                
+                <form action="/host/delete-home/<%= home._id %>" method="POST" class="flex-1">
+                   <button type="submit" 
+                           class="w-full py-2.5 px-4 rounded-lg border border-red-100 text-red-600 bg-red-50 font-bold text-sm hover:bg-red-100 transition">
+                     Delete
+                   </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="bg-white rounded-2xl p-16 text-center shadow-sm border border-gray-200 mt-8">
+        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <i class="fas fa-home text-3xl text-gray-400"></i>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">No properties listed yet</h2>
+        <p class="text-gray-500 mb-8 max-w-md mx-auto">Once you list your home, it will appear here where you can manage its availability and settings.</p>
+        <a href="/host/add-home" class="inline-block bg-brand text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-[#E31C5F] transition">
+          List your first home
+        </a>
+      </div>
+    <% } %>
+  </main>
+
+  <div class="h-20 md:hidden"></div>
+</body>
+</html>

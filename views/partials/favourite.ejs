@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= pageTitle %> | Airbnb</title>
+    
+    <link rel="stylesheet" href="/output.css" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+      /* Airbnb Typography & Smooth Rendering */
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #222222;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Airbnb Brand Colors */
+      .text-brand { color: #FF385C; }
+      .bg-brand { background-color: #FF385C; }
+      .border-brand { border-color: #FF385C; }
+
+      /* Custom Scrollbar for a cleaner look */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #FF385C;
+      }
+      
+      /* Mobile Tap Highlight Removal */
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+    <script>
+  async function toggleFavourite(button, homeId) {
+    const icon = button.querySelector('.heart-icon');
+    
+    // 1. Instantly toggle classes for better UX (Optimistic UI)
+    const isActive = icon.classList.contains('fill-[#FF385C]');
+    
+    if (isActive) {
+      icon.classList.replace('fill-[#FF385C]', 'fill-black/30');
+      icon.classList.remove('stroke-[#FF385C]');
+    } else {
+      icon.classList.replace('fill-black/30', 'fill-[#FF385C]');
+      icon.classList.add('stroke-[#FF385C]');
+    }
+
+    // 2. Send the actual request to the backend
+    try {
+      const response = await fetch('/favourites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: homeId })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update favourite');
+      }
+    } catch (err) {
+      console.error(err);
+      // Revert if the server request fails
+      alert("Could not update favorites. Please try again.");
+      window.location.reload(); 
+    }
+  }
+</script>

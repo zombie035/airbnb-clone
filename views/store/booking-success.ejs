@@ -1,0 +1,128 @@
+<%- include('../partials/head') %>
+<style>
+  :root {
+    --crimson: #990000;
+    --crimson-dark: #7a0000;
+  }
+
+  /* Main Card Pop Entrance */
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .animate-pop {
+    animation: popIn 0.6s cubic-bezier(0.17, 0.89, 0.32, 1.49) forwards;
+  }
+
+  /* Checkmark Drawing Logic */
+  .checkmark-svg {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #fff;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px var(--crimson);
+    animation: fillCircle .4s ease-in-out .4s forwards, scaleCheck .3s ease-in-out .9s both;
+  }
+
+  .checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: var(--crimson);
+    fill: none;
+    animation: strokePath 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+
+  .checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: strokePath 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+
+  @keyframes strokePath { 100% { stroke-dashoffset: 0; } }
+  @keyframes scaleCheck { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+  @keyframes fillCircle { 100% { box-shadow: inset 0px 0px 0px 50px var(--crimson); } }
+
+  /* Confetti Styles */
+  .confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    top: -10px;
+    animation: confettiFall 4s linear infinite;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col m-0 p-0">
+  <%- include('../partials/nav') %>
+
+  <div id="confetti-wrapper" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <main class="flex-grow flex items-center justify-center px-4 relative z-10">
+    <div class="max-w-md w-full bg-white rounded-[3rem] shadow-2xl p-10 text-center animate-pop">
+      
+      <div class="flex justify-center mb-8">
+        <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+
+      <h1 class="text-3xl font-black text-gray-900 mb-2">Payment Successful!</h1>
+      <p class="text-gray-500 mb-8 leading-relaxed">
+        Your booking is confirmed! A detailed receipt has been sent to your email.
+      </p>
+
+      <div class="space-y-4">
+        <a href="/index/" 
+           class="block w-full bg-[#990000] text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-[#7a0000] transition-all transform hover:scale-[1.02] active:scale-95">
+          View My Bookings
+        </a>
+        <a href="/home-list/" 
+           class="block w-full bg-white text-[#990000] border-2 border-[#990000] font-bold py-4 rounded-2xl hover:bg-red-50 transition-all">
+          Explore More Homes
+        </a>
+      </div>
+      
+      <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-10">
+        Airbnb Crimson Security Verified
+      </p>
+    </div>
+  </main>
+
+  <script>
+    function createConfetti() {
+      const wrapper = document.getElementById('confetti-wrapper');
+      const colors = ['#990000', '#cc0000', '#ff4d4d', '#7a0000', '#ff8080'];
+      
+      for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = (Math.random() * 4) + 's';
+        piece.style.width = (Math.random() * 10 + 5) + 'px';
+        piece.style.height = piece.style.width;
+        wrapper.appendChild(piece);
+      }
+    }
+    
+    // Initialize confetti on load
+    window.addEventListener('load', createConfetti);
+  </script>
+</body>
+</html>

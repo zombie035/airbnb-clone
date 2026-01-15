@@ -1,0 +1,172 @@
+<%- include('../partials/head') %>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+  body { font-family: 'Inter', sans-serif; color: #222222; background-color: #f7f7f7; }
+  .text-brand { color: #FF385C; }
+  .bg-brand { background-color: #FF385C; }
+  .focus-ring-brand:focus { outline: none; ring: 2px; --tw-ring-color: #FF385C; border-color: #FF385C; }
+  
+  /* Custom transition for inputs */
+  .form-input {
+    transition: all 0.2s ease;
+    border: 1px solid #B0B0B0;
+  }
+  .form-input:focus {
+    border-color: #222222;
+    box-shadow: inset 0 0 0 1px #222222;
+    outline: none;
+  }
+</style>
+</head>
+
+<body class="bg-[#F7F7F7]">
+  <%- include('../partials/nav') %>
+
+  <main class="container mx-auto mt-8 md:mt-12 mb-20 px-4 max-w-2xl">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
+      
+      <header class="mb-10">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
+          <%= editing ? "Update your listing" : "List your home"%>
+        </h1>
+        <p class="text-gray-500 mt-2">
+          <%= editing ? "Refine the details that guests will see." : "Share the details of your place with guests."%>
+        </p>
+      </header>
+
+      <form action="/host/<%= editing ? 'edit-home' : 'add-home'%>" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="id" value="<%= editing ? home._id : ''%>" />
+
+        <div>
+          <label for="houseName" class="block text-sm font-semibold mb-2">Listing Title</label>
+          <input
+            type="text"
+            id="houseName"
+            name="houseName"
+            value="<%= editing ? home.houseName : ''%>"
+            placeholder="e.g. Modern Apartment with City View"
+            class="form-input w-full px-4 py-3 rounded-lg text-sm"
+            required />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="price" class="block text-sm font-semibold mb-2">Price per night</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">Rs</span>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value="<%= editing ? home.price : ''%>"
+                placeholder="0"
+                class="form-input w-full pl-10 pr-4 py-3 rounded-lg text-sm"
+                required />
+            </div>
+          </div>
+
+          <div>
+            <label for="rating" class="block text-sm font-semibold mb-2">Rating</label>
+            <input
+              type="text"
+              id="rating"
+              name="rating"
+              value="<%= editing ? home.rating : ''%>"
+              placeholder="e.g. 4.8"
+              class="form-input w-full px-4 py-3 rounded-lg text-sm" />
+          </div>
+        </div>
+
+        <div>
+          <label for="location" class="block text-sm font-semibold mb-2">Location</label>
+          <div class="relative">
+            <i class="fas fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              value="<%= editing ? home.location : ''%>"
+              placeholder="City, Country"
+              class="form-input w-full pl-10 pr-4 py-3 rounded-lg text-sm"
+              required />
+          </div>
+        </div>
+
+        <div>
+          <label for="photo" class="block text-sm font-semibold mb-2">Cover Photo</label>
+          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-brand transition cursor-pointer bg-gray-50">
+            <div class="space-y-1 text-center">
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+                      <div>
+          <label for="photo" class="block text-sm font-semibold mb-2">Cover Photo</label>
+          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-brand transition cursor-pointer bg-gray-50">
+            <div class="space-y-1 text-center">
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div class="flex text-sm text-gray-600 justify-center">
+                <label for="photo" class="relative cursor-pointer bg-transparent rounded-md font-bold text-brand hover:text-[#E31C5F]">
+                  <span id="file-name-text">Upload a file</span>
+                  <input id="photo" name="photo" type="file" class="sr-only" accept="image/*" <%= editing ? '' : 'required' %>>
+                </label>
+                <p id="drag-drop-text" class="pl-1">or drag and drop</p>
+              </div>
+              <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB</p>
+            </div>
+          </div>
+          <% if (editing && home.photo) { %>
+            <p class="mt-2 text-xs text-gray-500 italic">Current: <%= home.photo %></p>
+          <% } %>
+        </div>
+
+          </div>
+          <% if (editing && home.photo) { %>
+            <p class="mt-2 text-xs text-gray-500 italic">Current: <%= home.photo %></p>
+          <% } %>
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-semibold mb-2">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="5"
+            placeholder="What makes your place special?"
+            class="form-input w-full px-4 py-3 rounded-lg text-sm leading-relaxed"
+            required><%= editing ? home.description : ''%></textarea>
+        </div>
+
+        <div class="pt-6 border-t border-gray-100">
+          <button type="submit" class="w-full bg-brand hover:bg-[#E31C5F] text-white py-3.5 rounded-lg font-bold text-lg transition duration-200 shadow-md active:scale-[0.98]">
+            <%= editing ? "Update listing" : "Create listing"%>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+    <script>
+  document.getElementById('photo').addEventListener('change', function(event) {
+    const fileName = event.target.files[0]?.name;
+    const labelText = document.getElementById('file-name-text');
+    const dragText = document.getElementById('drag-drop-text');
+
+    if (fileName) {
+      // 1. Update the text to show the filename
+      labelText.textContent = fileName;
+      
+      // 2. Hide the "or drag and drop" text for a cleaner look
+      if (dragText) dragText.style.display = 'none';
+      
+      // 3. Optional: Change color to green to indicate success
+      labelText.classList.remove('text-brand');
+      labelText.classList.add('text-green-600');
+    }
+  });
+</script>
+  <div class="h-20 md:hidden"></div>
+</body>
+</html>

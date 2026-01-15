@@ -1,0 +1,268 @@
+<%- include('../partials/head') %>
+<style>
+  .bg-crimson { background-color: #990000; }
+  .text-crimson { color: #990000; }
+  .border-crimson { border-color: #990000; }
+  .bg-crimson-soft { background-color: #fff5f5; }
+  .crimson-gradient { background: linear-gradient(135deg, #990000 0%, #cc0000 100%); }
+  
+  /* Ticket-style notched border effect */
+  .ticket-border {
+    position: relative;
+    border-top: 2px dashed #e5e7eb;
+  }
+  .ticket-border::before, .ticket-border::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f9fafb; 
+    border-radius: 50%;
+  }
+  .ticket-border::before { left: -10px; }
+  .ticket-border::after { right: -10px; }
+
+  /* Mobile image fixes */
+  .home-img-wrapper {
+    width: 100%;
+    height: 200px; /* Fixed height for mobile */
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .home-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* Mobile responsive adjustments */
+  @media (max-width: 640px) {
+    .mobile-order-1 { order: 1; }
+    .mobile-order-2 { order: 2; }
+    .home-img-wrapper {
+      height: 220px;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .home-img-wrapper {
+      height: 250px;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .home-img-wrapper {
+      height: 200px;
+    }
+  }
+</style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <%- include('../partials/nav') %>
+
+  <main class="container mx-auto mt-6 md:mt-12 px-4 max-w-5xl">
+    <div class="mb-8 flex items-center justify-between">
+      <h1 class="text-3xl font-black text-gray-900 tracking-tight">Confirm Your <span class="text-crimson">Stay</span></h1>
+      <a href="/homes/<%= home.id %>" class="text-sm font-bold text-gray-500 hover:text-crimson transition">Cancel</a>
+    </div>
+
+    <!-- Trip Details Section - Now at the top -->
+    <div class="w-full mb-8 mobile-order-1">
+      <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">Your Trip Details</h2>
+        
+        <form id="bookingForm" action="/bookings/confirm" method="POST" class="space-y-6">
+          <input type="hidden" name="homeId" value="<%= home.id %>">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Check-in Date</label>
+              <input type="date" name="checkIn" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition text-gray-700">
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Check-out Date</label>
+              <input type="date" name="checkOut" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition text-gray-700">
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Number of Guests</label>
+            <select name="guests" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition bg-white text-gray-700">
+              <option value="1">1 Guest</option>
+              <option value="2" selected>2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4+">4+ Guests</option>
+            </select>
+          </div>
+
+          <div class="pt-4">
+            <h3 class="font-bold text-gray-800 mb-2">Payment Method</h3>
+            <div class="flex items-center p-4 border-2 border-crimson bg-crimson-soft rounded-2xl">
+              <div class="w-12 h-8 bg-gray-800 rounded-md mr-4 flex items-center justify-center">
+                <span class="text-[8px] text-white font-bold uppercase">UPI</span>
+              </div>
+              <div class="flex-grow">
+                <p class="text-sm font-bold text-gray-800">Unified Payments Interface</p>
+                <p class="text-xs text-gray-500">Pay via GPay, PhonePe, etc.</p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Property Info & Payment Card - Now at the bottom -->
+    <div class="w-full mobile-order-2">
+      <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden mb-8">
+        <!-- Image with fixed height -->
+        <div class="home-img-wrapper">
+          <img 
+            src="/<%= home.photo%>" 
+            alt="<%= home.houseName %>"
+            onerror="this.onerror=null; this.src='https://placehold.co/600x400/f3f4f6/990000?text=<%= encodeURIComponent(home.houseName) %>&font=montserrat';"
+          >
+        </div>
+
+        <div class="p-6">
+          <h3 class="font-bold text-gray-800 text-lg mb-1"><%= home.houseName %></h3>
+          <p class="text-sm text-gray-500 mb-4 flex items-center">
+            <svg class="w-4 h-4 mr-1 text-crimson" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+            <%= home.location %>
+          </p>
+
+          <div class="space-y-3 pt-4 border-t border-gray-100">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Price per night</span>
+              <span class="font-semibold text-gray-800">₹<%= home.price %></span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Service fee (15%)</span>
+              <span class="font-semibold text-gray-800">₹<%= (home.price * 0.15).toFixed(0) %></span>
+            </div>
+          </div>
+
+          <div class="ticket-border mt-6 pt-6 flex justify-between items-center mb-6">
+            <span class="text-lg font-black text-gray-900">Total (INR)</span>
+            <span class="text-2xl font-black text-crimson">₹<%= (home.price * 1.15).toFixed(0) %></span>
+          </div>
+
+          <button
+            id="payBtn"
+            data-upi="upi://pay?pa=surendarpurohit152-1@okhdfcbank&pn=Surendar%20Purohit&am=<%= (home.price * 1.15).toFixed(0) %>&cu=INR&tn=StayAt<%= home.houseName.replace(/\s/g, '') %>"
+            class="w-full bg-[#990000] text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all hover:bg-[#880000]"
+          >
+            <span id="payText">Confirm and Pay</span>
+            <svg id="spinner" class="hidden w-6 h-6 animate-spin" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/>
+              <path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+            </svg>
+          </button>
+          
+          <p class="text-[10px] text-center text-gray-400 mt-6 uppercase tracking-widest font-bold">
+            Secure SSL Encryption &bull; No hidden fees
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const payBtn = document.getElementById("payBtn");
+    const text = document.getElementById("payText");
+    const spinner = document.getElementById("spinner");
+    const bookingForm = document.getElementById("bookingForm");
+
+    // Set default dates (today and tomorrow)
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    
+    // Format dates as YYYY-MM-DD
+    const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+    };
+    
+    // Set default check-in and check-out dates
+    const checkInInput = document.querySelector('input[name="checkIn"]');
+    const checkOutInput = document.querySelector('input[name="checkOut"]');
+    
+    if (checkInInput && !checkInInput.value) {
+      checkInInput.value = formatDate(today);
+      checkInInput.min = formatDate(today);
+    }
+    
+    if (checkOutInput && !checkOutInput.value) {
+      checkOutInput.value = formatDate(tomorrow);
+      checkOutInput.min = formatDate(tomorrow);
+    }
+    
+    // Update check-out min date when check-in changes
+    checkInInput?.addEventListener('change', function() {
+      const checkInDate = new Date(this.value);
+      const nextDay = new Date(checkInDate);
+      nextDay.setDate(checkInDate.getDate() + 1);
+      checkOutInput.min = formatDate(nextDay);
+      
+      // If current check-out is before new min date, update it
+      const currentCheckOut = new Date(checkOutInput.value);
+      if (currentCheckOut < nextDay) {
+        checkOutInput.value = formatDate(nextDay);
+      }
+    });
+
+    payBtn.addEventListener("click", function (e) {
+      // Validate form first
+      if(!bookingForm.checkValidity()) {
+        bookingForm.reportValidity();
+        return;
+      }
+
+      // Validate dates
+      const checkIn = new Date(checkInInput.value);
+      const checkOut = new Date(checkOutInput.value);
+      
+      
+      setTimeout(() => {
+    window.location.href = payBtn.href;
+  }, 4000);
+      // UI processing state
+      payBtn.disabled = true;
+      payBtn.classList.add('opacity-80');
+      text.textContent = "Opening UPI Apps...";
+      spinner.classList.remove("hidden");
+      
+      // Save form data to session so we can submit it when user returns
+      const formData = new FormData(bookingForm);
+      const data = Object.fromEntries(formData.entries());
+      sessionStorage.setItem("pendingBooking", JSON.stringify(data));
+      sessionStorage.setItem("paymentStarted", "true");
+
+      // Open UPI
+      window.location.href = payBtn.getAttribute('data-upi');
+      if (checkOut <= checkIn) {
+        alert("Check-out date must be after check-in date");
+        checkOutInput.focus();
+        return;
+      }
+    });
+
+    // Detect return to browser
+    document.addEventListener("visibilitychange", () => {
+      if (
+        document.visibilityState === "visible" &&
+        sessionStorage.getItem("paymentStarted") === "true"
+      ) {
+        sessionStorage.removeItem("paymentStarted");
+        
+        // Finalize the booking by submitting the hidden form
+        bookingForm.submit();
+      }
+    });
+  </script>
+</body>
+</html>

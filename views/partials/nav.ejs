@@ -1,0 +1,456 @@
+<style>
+  /* Remove or comment out the old CSS classes:
+  .search-expand-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  
+  .search-expand-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+  }
+  
+  .search-expand-exit {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .search-expand-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 200ms ease-in, transform 200ms ease-in;
+  }
+  */
+  
+  /* Add these new animation classes */
+  .search-expand {
+    animation: searchExpand 0.3s ease-out forwards;
+  }
+  
+  .search-collapse {
+    animation: searchCollapse 0.3s ease-in forwards;
+  }
+  
+  @keyframes searchExpand {
+    0% {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  @keyframes searchCollapse {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+  }
+  
+  .search-fab {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #FF385C 0%, #E31C5F 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(255, 56, 92, 0.3);
+    z-index: 49;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .search-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(255, 56, 92, 0.4);
+  }
+  
+  .search-fab i {
+    color: white;
+    font-size: 24px;
+  }
+</style>
+
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-40 py-3 md:py-4">
+  <div class="container mx-auto px-4 md:px-10">
+    
+    <!-- Mobile Search Container (Hidden by default) -->
+<div id="mobile-search-container" class="hidden absolute inset-0 bg-white z-50 items-center px-4" style="opacity: 0; transform: scale(0.95) translateY(-10px);">
+  <div class="w-full flex items-center">
+    <!-- Back Button -->
+    <button onclick="closeSearch()" class="mr-3 p-2 text-gray-600 hover:text-[#FF385C] transition-colors">
+      <i class="fas fa-arrow-left text-lg"></i>
+    </button>
+    
+    <!-- Search Form -->
+    <form action="/search" method="GET" class="flex-1">
+      <div class="relative">
+        <input 
+          id="mobile-search-input"
+          type="text" 
+          name="q" 
+          placeholder="Search homes, locations, amenities..." 
+          class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:border-transparent transition-all duration-200"
+          autocomplete="off"
+        >
+        <div class="absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors">
+          <i class="fas fa-search text-gray-400"></i>
+        </div>
+        <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-[#FF385C] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#E31C5F] transition-colors">
+          <i class="fas fa-arrow-right text-sm"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    <!-- Mobile Header with Logo and Search Toggle -->
+    <div class="md:hidden flex items-center justify-between">
+      <!-- Logo -->
+      <a href="/" id="nav-logo" class="flex items-center text-[#FF385C] transition hover:opacity-80">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" style="display:block;fill:currentColor">
+          <path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415v.301c0 4.262-2.87 7.405-7.124 7.405-2.28 0-4.446-1.035-6.071-2.732l-.304-.338c-.14-.163-.34-.163-.48 0l-.304.338C13.446 30.965 11.28 32 9 32 4.746 32 1.876 28.857 1.876 24.595v-.301c0-.421.05-.818.156-1.131l.095-.255.132-.302c.986-2.296 5.146-11.006 7.1-14.836l.533-1.025C12.537 1.963 13.992 1 16 1zm0 2c-1.239 0-2.053.539-2.987 2.21l-.523 1.008c-1.926 3.776-6.06 12.43-7.031 14.692l-.345.83c-.114.285-.158.486-.182.721L4.876 22.5l-.01.345v.301c0 3.14 2.108 5.405 5.124 5.405 1.703 0 3.339-.832 4.606-2.164l.432-.47c.725-.79 1.885-.79 2.61 0l.432.47c1.267 1.332 2.903 2.164 4.606 2.164 3.01 0 5.124-2.265 5.124-5.405v-.301c0-.421-.053-.827-.152-1.163l-.114-.335-.134-.32c-.971-2.262-5.105-10.916-7.031-14.692l-.523-1.008C18.053 3.539 17.24 3 16 3zm0 15.156c-2.396 0-4.344 1.877-4.344 4.184 0 2.307 1.948 4.184 4.344 4.184 2.396 0 4.344-1.877 4.344-4.184 0-2.307-1.948-4.184-4.344-4.184zm0 2c1.332 0 2.344.945 2.344 2.184s-1.012 2.184-2.344 2.184-2.344-.945-2.344-2.184 1.012-2.184 2.344-2.184z"></path>
+        </svg>
+        <span class="ml-2 font-bold text-xl tracking-tighter">LandBnb</span>
+      </a>
+      
+      <!-- Search Toggle Button (Mobile) -->
+      <button onclick="toggleSearchExpand()" class="p-2 text-gray-600 hover:text-[#FF385C]">
+        <i id="mobile-search-icon" class="fas fa-search text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Desktop: Original Layout -->
+    <div class="hidden md:flex justify-between items-center relative">
+      
+      <!-- Logo -->
+      <a href="/" class="flex items-center text-[#FF385C] transition hover:opacity-80">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-9 md:h-9" style="display:block;fill:currentColor">
+          <path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415v.301c0 4.262-2.87 7.405-7.124 7.405-2.28 0-4.446-1.035-6.071-2.732l-.304-.338c-.14-.163-.34-.163-.48 0l-.304.338C13.446 30.965 11.28 32 9 32 4.746 32 1.876 28.857 1.876 24.595v-.301c0-.421.05-.818.156-1.131l.095-.255.132-.302c.986-2.296 5.146-11.006 7.1-14.836l.533-1.025C12.537 1.963 13.992 1 16 1zm0 2c-1.239 0-2.053.539-2.987 2.21l-.523 1.008c-1.926 3.776-6.06 12.43-7.031 14.692l-.345.83c-.114.285-.158.486-.182.721L4.876 22.5l-.01.345v.301c0 3.14 2.108 5.405 5.124 5.405 1.703 0 3.339-.832 4.606-2.164l.432-.47c.725-.79 1.885-.79 2.61 0l.432.47c1.267 1.332 2.903 2.164 4.606 2.164 3.01 0 5.124-2.265 5.124-5.405v-.301c0-.421-.053-.827-.152-1.163l-.114-.335-.134-.32c-.971-2.262-5.105-10.916-7.031-14.692l-.523-1.008C18.053 3.539 17.24 3 16 3zm0 15.156c-2.396 0-4.344 1.877-4.344 4.184 0 2.307 1.948 4.184 4.344 4.184 2.396 0 4.344-1.877 4.344-4.184 0-2.307-1.948-4.184-4.344-4.184zm0 2c1.332 0 2.344.945 2.344 2.184s-1.012 2.184-2.344 2.184-2.344-.945-2.344-2.184 1.012-2.184 2.344-2.184z"></path>
+        </svg>
+        <span class="ml-2 font-bold text-xl tracking-tighter lg:inline">LandBnb</span>
+      </a>
+      
+      <!-- Search Bar - Desktop -->
+      <div class="flex-1 max-w-2xl mx-8">
+        <form action="/search" method="GET" class="relative">
+          <div class="relative">
+            <input 
+              type="text" 
+              name="q" 
+              placeholder="Search homes, locations, amenities..." 
+              class="w-full pl-12 pr-24 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:border-transparent shadow-sm hover:shadow-md transition-shadow"
+            >
+            <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-[#FF385C] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#E31C5F] transition">
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Desktop Navigation Links -->
+      <div class="flex items-center space-x-5 text-sm font-semibold text-gray-600">
+        <a href="/" class="hover:text-black transition">Explore</a>
+        <% if (isLoggedIn) { %>
+          <% if (user && user.userType === 'guest') { %>
+            <a href="/bookings" class="hover:text-black transition">Trips</a>
+            <a href="/favourites" class="hover:text-black transition">Wishlists</a>
+          <% } else if (user && user.userType === 'host') { %>
+            <a href="/host/host-home-list" class="hover:text-black transition">My Listings</a>
+          <% } %>
+        <% } %>
+      </div>
+
+      <!-- Profile Menu - Desktop -->
+      <div class="relative">
+        <button id="menu-trigger" class="flex items-center border border-gray-300 p-2 pl-3 rounded-full hover:shadow-md transition bg-white cursor-pointer select-none">
+          <i class="fas fa-bars text-sm text-gray-600 mr-3"></i>
+          <div class="bg-gray-500 text-white rounded-full h-8 w-8 flex items-center justify-center overflow-hidden">
+            <% if (isLoggedIn && user && user.avatar) { %>
+              <img src="<%= user.avatar %>" alt="User" class="w-full h-full object-cover">
+            <% } else { %>
+              <i class="fas fa-user text-xs"></i>
+            <% } %>
+          </div>
+        </button>
+
+        <div id="side-menu" class="hidden absolute right-0 mt-3 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-2 z-[100]">
+          <% if (isLoggedIn && user) { %>
+            <div class="px-4 py-3 border-b border-gray-100">
+              <p class="text-sm font-bold text-gray-900 truncate"><%= user.email %></p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-0.5">Logged in as <%= user.userType %></p>
+            </div>
+            <a href="/homes" class="block px-4 py-3 text-sm hover:bg-gray-50">All Homes</a>
+            <a href="/search" class="block px-4 py-3 text-sm hover:bg-gray-50">Advanced Search</a>
+            
+            <div class="border-t border-gray-100 mt-2">
+              <form action="/logout" method="POST">
+                <button type="submit" class="block w-full text-left px-4 py-3 text-sm text-red-500 font-bold hover:bg-red-50 cursor-pointer">Log out</button>
+              </form>
+            </div>
+          <% } else { %>
+            <a href="/signup" class="block px-4 py-3 text-sm font-bold hover:bg-gray-50">Sign up</a>
+            <a href="/login" class="block px-4 py-3 text-sm hover:bg-gray-50">Log in</a>
+          <% } %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
+  <div class="grid grid-cols-4 h-16">
+    <a href="/" class="flex flex-col items-center justify-center text-gray-500 hover:text-[#FF385C] active:text-[#FF385C]">
+      <i class="fas fa-search text-xl mb-1"></i>
+      <span class="text-[10px] font-medium">Explore</span>
+    </a>
+
+    <a href="<%= isLoggedIn ? '/favourites' : '/login' %>" class="flex flex-col items-center justify-center text-gray-500 hover:text-[#FF385C]">
+      <i class="far fa-heart text-xl mb-1"></i>
+      <span class="text-[10px] font-medium">Wishlists</span>
+    </a>
+
+    <% if (isLoggedIn && user && user.userType === 'host') { %>
+      <a href="/host/host-home-list" class="flex flex-col items-center justify-center text-gray-500 hover:text-[#FF385C]">
+        <i class="fas fa-home text-xl mb-1"></i>
+        <span class="text-[10px] font-medium">Listings</span>
+      </a>
+      
+    <% } else { %>
+      <a href="<%= isLoggedIn ? '/bookings' : '/login' %>" class="flex flex-col items-center justify-center text-gray-500 hover:text-[#FF385C]">
+        <i class="fab fa-airbnb text-xl mb-1"></i> 
+        <span class="text-[10px] font-medium">Trips</span>
+      </a>
+    <% } %>
+
+    <button onclick="toggleMobileProfile()" class="flex flex-col items-center justify-center text-gray-500 hover:text-[#FF385C]">
+      <% if (isLoggedIn) { %>
+        <div class="w-6 h-6 rounded-full bg-gray-300 overflow-hidden mb-1 border border-gray-400">
+          <i class="fas fa-user text-xs text-white h-full w-full flex items-center justify-center bg-gray-400"></i>
+        </div>
+        <span class="text-[10px] font-medium">Profile</span>
+      <% } else { %>
+        <i class="fas fa-user-circle text-xl mb-1"></i>
+        <span class="text-[10px] font-medium">Log in</span>
+      <% } %>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Profile Modal -->
+<div id="mobile-profile-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex-col justify-end opacity-0 transition-opacity duration-300">
+  <div class="bg-white w-full rounded-t-2xl p-5 transform translate-y-full transition-transform duration-300 ease-out" id="mobile-profile-content">
+    <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+    
+    <% if (isLoggedIn && user) { %>
+      <div class="mb-6">
+        <h2 class="text-xl font-bold"><%= user.email %></h2>
+        <p class="text-sm text-gray-500 capitalize"><%= user.userType %></p>
+      </div>
+      <div class="space-y-4">
+        
+        <% if (isLoggedIn && user && user.userType === 'host') { %>
+        <a href="/host/add-home" class="block w-full py-3 border-b border-gray-100 flex items-center justify-between">
+          <span>Add a home</span>
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        </a>
+        <% } %>
+        <a href="/profile" class="block w-full py-3 border-b border-gray-100 flex items-center justify-between">
+          <span>Account Settings</span>
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        </a>
+        <a href="/search" class="block w-full py-3 border-b border-gray-100 flex items-center justify-between">
+          <span>Advanced Search</span>
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        </a>
+        <form action="/logout" method="POST">
+          <button class="w-full py-3 text-left text-red-500 font-bold">Log Out</button>
+        </form>
+      </div>
+    <% } else { %>
+      <h2 class="text-xl font-bold mb-2">Log in to LandBnb</h2>
+      <p class="text-gray-500 text-sm mb-6">Manage your trips and wishlists.</p>
+      <a href="/login" class="block w-full bg-[#FF385C] text-white text-center py-3 rounded-lg font-bold mb-3">Log In</a>
+      <a href="/signup" class="block w-full border border-black text-black text-center py-3 rounded-lg font-bold">Sign Up</a>
+    <% } %>
+    
+    <button onclick="toggleMobileProfile()" class="mt-6 w-full py-3 text-gray-500 font-semibold text-sm">Close</button>
+  </div>
+</div>
+
+<script>
+  // Desktop Menu Logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('menu-trigger');
+    const menu = document.getElementById('side-menu');
+
+    if (trigger && menu) {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+      });
+      document.addEventListener('click', (e) => {
+        if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.add('hidden');
+        }
+      });
+    }
+
+    // Auto-focus search input on desktop when pressing Ctrl+K or Cmd+K
+    const searchInput = document.querySelector('input[name="q"]');
+    if (searchInput) {
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        if (e.key === 'Escape') {
+          searchInput.blur();
+        }
+      });
+    }
+  });
+
+  // Mobile Profile Logic
+  function toggleMobileProfile() {
+    const modal = document.getElementById('mobile-profile-modal');
+    const content = document.getElementById('mobile-profile-content');
+    
+    if (modal.classList.contains('hidden')) {
+      // Open
+      modal.classList.remove('hidden');
+      // Small delay to allow display:block to apply before opacity transition
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        content.classList.remove('translate-y-full');
+      }, 10);
+    } else {
+      // Close
+      modal.classList.add('opacity-0');
+      content.classList.add('translate-y-full');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300); // Wait for transition to finish
+    }
+  }
+  
+  function openSearchModal() {
+    const modal = document.getElementById('search-modal');
+    const input = document.getElementById('mobile-search-input');
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      input.focus();
+    }, 10);
+  }
+
+  function closeSearchModal() {
+    const modal = document.getElementById('search-modal');
+    modal.classList.add('opacity-0');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 300);
+  }
+
+  // Close modal when clicking outside
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('search-modal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target.id === 'search-modal') {
+          closeSearchModal();
+        }
+      });
+    }
+  });
+  
+    // Search Expand Functions
+  // Search Expand Functions
+let isSearchExpanded = false;
+
+function toggleSearchExpand() {
+  const searchContainer = document.getElementById('mobile-search-container');
+  const searchInput = document.getElementById('mobile-search-input');
+  const navLogo = document.getElementById('nav-logo');
+  const desktopNav = document.getElementById('desktop-nav-links');
+  const profileMenu = document.getElementById('profile-menu-desktop');
+  
+  if (!isSearchExpanded) {
+    // Expand search
+    searchContainer.classList.remove('hidden', 'search-collapse');
+    searchContainer.classList.add('flex', 'search-expand');
+    
+    // Hide other navbar elements with fade out
+    if (navLogo) {
+      navLogo.style.transition = 'opacity 0.2s ease';
+      navLogo.style.opacity = '0';
+      setTimeout(() => navLogo.classList.add('hidden'), 200);
+    }
+    if (desktopNav) desktopNav.classList.add('hidden');
+    if (profileMenu) profileMenu.classList.add('hidden');
+    
+    // Focus input after animation starts
+    setTimeout(() => {
+      searchInput.focus();
+    }, 150);
+    
+    isSearchExpanded = true;
+  } else {
+    // Collapse search
+    searchContainer.classList.remove('search-expand');
+    searchContainer.classList.add('search-collapse');
+    
+    // Show other navbar elements with fade in
+    if (navLogo) {
+      navLogo.classList.remove('hidden');
+      setTimeout(() => {
+        navLogo.style.opacity = '1';
+      }, 10);
+    }
+    if (desktopNav) desktopNav.classList.remove('hidden');
+    if (profileMenu) profileMenu.classList.remove('hidden');
+    
+    // Delay hiding to allow animation to finish
+    setTimeout(() => {
+      searchContainer.classList.add('hidden');
+      searchContainer.classList.remove('flex', 'search-collapse');
+      searchContainer.style.opacity = '0';
+      searchContainer.style.transform = 'scale(0.95) translateY(-10px)';
+    }, 300);
+    
+    isSearchExpanded = false;
+  }
+}
+
+function closeSearch() {
+  if (isSearchExpanded) {
+    toggleSearchExpand();
+  }
+}
+  
+  // Close search when clicking escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isSearchExpanded) {
+      closeSearch();
+    }
+  });
+  
+  
+</script>

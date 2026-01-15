@@ -1,0 +1,76 @@
+<%- include('../partials/head') %>
+</head>
+<body class="bg-white">
+  <%- include('../partials/nav') %>
+
+  <main class="container mx-auto px-6 py-12 max-w-[1600px]">
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Wishlists</h1>
+      <p class="text-gray-500 mt-2 font-light">
+        <%= favouriteHomes.length %> saved places
+      </p>
+    </div>
+
+    <% if (favouriteHomes.length > 0) { %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
+        <% favouriteHomes.forEach(home => { %>
+          <div class="group relative cursor-pointer">
+            
+            <div class="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 mb-3 shadow-sm">
+              <img 
+                src="<%= home.photo %>" 
+                alt="<%= home.houseName %>" 
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              
+              <form action="/favourites/delete/<%= home._id %>" method="POST" class="absolute top-3 right-3">
+                <button 
+                  type="submit" 
+                  class="bg-white/90 hover:bg-white text-black w-8 h-8 rounded-full flex items-center justify-center shadow-md transition active:scale-90"
+                >
+                  <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+              </form>
+            </div>
+
+            <div class="flex justify-between items-start">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-[15px] font-bold text-gray-900 truncate">
+                  <%= home.location %>
+                </h3>
+                <p class="text-[14px] text-gray-500 truncate leading-tight">
+                  <%= home.houseName %>
+                </p>
+                <div class="mt-2">
+                  <span class="text-[15px] font-bold text-gray-900">Rs <%= home.price %></span>
+                  <span class="text-[15px] font-normal text-gray-900">night</span>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-1">
+                <i class="fa-solid fa-star text-[11px]"></i>
+                <span class="text-[14px] font-light text-gray-700"><%= home.rating %></span>
+              </div>
+            </div>
+
+            <a href="/homes/<%= home._id %>" class="absolute inset-0 z-0"></a>
+          </div>
+        <% }) %>
+      </div>
+
+    <% } else { %>
+      <div class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="mb-6">
+          <i class="fa-regular fa-heart text-6xl text-gray-200"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-800">Create your first wishlist</h2>
+        <p class="text-gray-500 mt-2 max-w-sm">As you search, click the heart icon to save your favorite places and Experiences to a wishlist.</p>
+        <a href="/" class="mt-8 px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition active:scale-95">
+          Start exploring
+        </a>
+      </div>
+    <% } %>
+  </main>
+
+  <div class="h-20 md:hidden"></div>
+</body>
+</html>

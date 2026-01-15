@@ -1,0 +1,89 @@
+<%- include('../partials/head') %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Smooth scaling for cards */
+    .home-card {
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+    .home-card:hover {
+      transform: translateY(-8px);
+    }
+    /* Custom line clamp to keep descriptions uniform */
+    .line-clamp-1 {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;  
+      overflow: hidden;
+    }
+  </style>
+  </head>
+  <body class="bg-gray-50 antialiased">
+    <%- include('../partials/nav') %>
+    
+    <main class="container mx-auto px-4 py-12">
+      <header class="mb-10 text-center md:text-left border-b border-gray-200 pb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">
+          Explore <span class="text-red-500">Stays</span>
+        </h1>
+        <p class="text-gray-500 mt-2 text-lg">Find the perfect place to call home, anywhere in the world.</p>
+      </header>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <% registeredHomes.forEach(home => { %>
+          <div class="home-card group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-2xl">
+            
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img 
+                src="<%= home.photo %>" 
+                alt="<%= home.houseName %>" 
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              >
+              <form action="/favourites" method="POST">
+  <input type="hidden" name="id" value="<%= home._id %>">
+  <button type="submit" class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-md rounded-full text-gray-700 hover:text-red-500 transition shadow-sm">
+    <i class="far fa-heart"></i>
+  </button>
+</form>
+              <span class="absolute bottom-3 left-3 bg-white px-2 py-1 rounded text-xs font-bold uppercase tracking-wider text-gray-800 shadow-sm">
+                Verified
+              </span>
+            </div>
+
+            <div class="p-5">
+              <div class="flex justify-between items-start mb-1">
+                <h3 class="text-lg font-bold text-gray-900 line-clamp-1"><%= home.houseName %></h3>
+                <div class="flex items-center bg-gray-50 px-2 py-1 rounded-lg">
+                  <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                  <span class="text-sm font-semibold text-gray-700"><%= home.rating %></span>
+                </div>
+              </div>
+
+              <p class="text-sm text-gray-500 mb-4 flex items-center">
+                <i class="fas fa-map-marker-alt mr-1.5 text-red-400"></i>
+                <%= home.location %>
+              </p>
+
+              <div class="flex items-center justify-between border-t border-gray-50 pt-4">
+                <div>
+                  <p class="text-xs text-gray-400 font-medium">Price per night</p>
+                  <span class="text-lg font-black text-gray-900">₹<%= home.price %></span>
+                </div>
+                
+                <a href="/reserve/<%=home._id%>" class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-red-200 active:scale-95">
+                  Book Now
+                </a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </main>
+
+    <% if (registeredHomes.length === 0) { %>
+      <div class="text-center py-20">
+        <i class="fas fa-home text-5xl text-gray-200 mb-4"></i>
+        <h2 class="text-xl font-medium text-gray-500">No homes found in this area.</h2>
+      </div>
+    <% } %>
+  </body>
+</html>

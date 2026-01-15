@@ -1,0 +1,104 @@
+<%- include('../partials/head') %>
+<style>
+  .bg-crimson { background-color: #990000; }
+  .text-crimson { color: #990000; }
+  .bg-crimson-soft { background-color: #fff5f5; }
+  .border-crimson { border-color: #990000; }
+</style>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-sans">
+  <%- include('../partials/nav') %>
+
+  <main class="container mx-auto mt-12 mb-20 px-4 max-w-5xl">
+    <div class="flex items-center justify-between mb-10">
+      <div>
+        <h1 class="text-4xl font-black text-gray-900 tracking-tight">
+          My <span class="text-crimson">Bookings</span>
+        </h1>
+        <p class="text-gray-500 font-medium">Manage your upcoming stays and trips</p>
+      </div>
+      <a href="/homes" class="hidden md:block bg-crimson text-white px-6 py-3 rounded-xl font-bold hover:bg-[#7a0000] transition shadow-lg">
+        Book Another Stay
+      </a>
+    </div>
+
+    <% if (bookings.length > 0) { %>
+      <div class="space-y-6">
+        <% bookings.forEach(booking => { %>
+          <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row transform transition hover:scale-[1.01]">
+            
+            <div class="w-full md:w-1/3 relative h-48 md:h-auto">
+              <img src="<%= booking.photoUrl || 'https://via.placeholder.com/400x300' %>" 
+                   class="w-full h-full object-cover" alt="Property">
+              <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-crimson shadow-sm">
+                Confirmed
+              </div>
+            </div>
+
+            <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="text-2xl font-bold text-gray-800 mb-1"><%= booking.houseName %></h3>
+                  <p class="text-gray-500 text-sm flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-crimson" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                    <%= booking.location %>
+                  </p>
+                </div>
+                <div class="text-right">
+                   <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter">Booking ID</p>
+                   <p class="text-sm font-mono text-gray-600">#<%= booking.id.substring(2, 8) %></p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-4 my-6 py-4 border-y border-gray-50">
+                <div>
+                  <p class="text-[10px] font-bold text-gray-400 uppercase">Check-in</p>
+                  <p class="font-bold text-gray-800"><%= booking.checkIn %></p>
+                </div>
+                <div>
+                  <p class="text-[10px] font-bold text-gray-400 uppercase">Check-out</p>
+                  <p class="font-bold text-gray-800"><%= booking.checkOut %></p>
+                </div>
+                <div>
+                  <p class="text-[10px] font-bold text-gray-400 uppercase">Guests</p>
+                  <p class="font-bold text-gray-800"><%= booking.guests %></p>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-xs font-bold text-gray-400 uppercase">Total Paid</span>
+                  <span class="text-xl font-black text-crimson">₹<%= booking.price %></span>
+                </div>
+                <div class="flex space-x-3">
+                  <button class="text-sm font-bold text-gray-400 hover:text-gray-600 transition">Get Help</button>
+                  <button class="bg-crimson-soft text-crimson px-5 py-2 rounded-lg font-bold text-sm hover:bg-red-100 transition">
+                    View Receipt
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+    <% } else { %>
+      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 p-12 md:p-20 text-center">
+        <div class="inline-flex items-center justify-center w-24 h-24 bg-crimson-light rounded-full mb-8 animate-pulse">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-crimson" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h2 class="text-3xl font-black text-gray-900 mb-4">No bookings yet</h2>
+        <p class="text-gray-500 mb-10 max-w-sm mx-auto">When you book a stay, your reservation details will appear here.</p>
+        <a href="/homes" class="inline-block bg-crimson text-white px-10 py-4 rounded-2xl font-bold shadow-lg">Start Exploring</a>
+      </div>
+    <% } %>
+
+    <p class="text-center text-xs text-gray-400 mt-12 uppercase tracking-widest">
+      Secure Booking System &bull; Airbnb Crimson
+    </p>
+  </main>
+</body>
+</html>

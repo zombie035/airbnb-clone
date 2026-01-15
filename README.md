@@ -36,7 +36,7 @@ View all available homes
 Detailed home view with pricing & description
 
 
-❤️ User Features![Uploading IMG_20260115_212744_209_transfer_2026-01-15_223538.jpg…]()
+❤️ User Features
 
 
 Add homes to favourites

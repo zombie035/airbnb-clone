@@ -293,3 +293,5 @@ This project is built to demonstrate full-stack development skills.
 
 
 ---
+
+<!-- CodeRabbit review trigger -->

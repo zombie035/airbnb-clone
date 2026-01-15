@@ -36,7 +36,8 @@ View all available homes
 Detailed home view with pricing & description
 
 
-❤️ User Features
+❤️ User Features![Uploading IMG_20260115_212744_209_transfer_2026-01-15_223538.jpg…]()
+
 
 Add homes to favourites
 
@@ -270,16 +271,3 @@ This project is built to demonstrate full-stack development skills.
 
 
 ---
-
-If you want, I can also:
-
-🔥 Make this shorter for recruiters
-
-📌 Add screenshots section
-
-🧾 Create a resume-friendly version
-
-🚀 Optimize it for GitHub stars & visibility
-
-
-Just tell me 👍

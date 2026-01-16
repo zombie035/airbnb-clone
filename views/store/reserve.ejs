@@ -26,7 +26,7 @@
   /* Mobile image fixes */
   .home-img-wrapper {
     width: 100%;
-    height: 200px; /* Fixed height for mobile */
+    height: 200px;
     overflow: hidden;
     position: relative;
   }
@@ -68,35 +68,42 @@
   <main class="container mx-auto mt-6 md:mt-12 px-4 max-w-5xl">
     <div class="mb-8 flex items-center justify-between">
       <h1 class="text-3xl font-black text-gray-900 tracking-tight">Confirm Your <span class="text-crimson">Stay</span></h1>
-      <a href="/homes/<%= home.id %>" class="text-sm font-bold text-gray-500 hover:text-crimson transition">Cancel</a>
+      <a href="/homes/<%= home._id %>" class="text-sm font-bold text-gray-500 hover:text-crimson transition">Cancel</a>
     </div>
 
-    <!-- Trip Details Section - Now at the top -->
+    <!-- Trip Details Section -->
     <div class="w-full mb-8 mobile-order-1">
       <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Your Trip Details</h2>
         
-        <form id="bookingForm" action="/bookings/confirm" method="POST" class="space-y-6">
-          <input type="hidden" name="homeId" value="<%= home.id %>">
+        <!-- Changed action to /confirm-booking -->
+        <form id="bookingForm" action="/confirm-booking" method="POST" class="space-y-6">
+          <!-- Use home._id instead of home.id -->
+          <input type="hidden" name="homeId" value="<%= home._id %>">
+          
+          <!-- Calculate and include total price -->
+          <input type="hidden" name="totalPrice" id="totalPriceInput" value="<%= (home.price * 1.15).toFixed(0) %>">
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Check-in Date</label>
-              <input type="date" name="checkIn" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition text-gray-700">
+              <input type="date" name="checkIn" id="checkIn" required 
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition text-gray-700">
             </div>
             <div class="space-y-2">
               <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Check-out Date</label>
-              <input type="date" name="checkOut" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition text-gray-700">
+              <input type="date" name="checkOut" id="checkOut" required 
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition text-gray-700">
             </div>
           </div>
 
           <div class="space-y-2">
             <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Number of Guests</label>
-            <select name="guests" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition bg-white text-gray-700">
+            <select name="guests" id="guests" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-crimson outline-none transition bg-white text-gray-700">
               <option value="1">1 Guest</option>
               <option value="2" selected>2 Guests</option>
               <option value="3">3 Guests</option>
-              <option value="4+">4+ Guests</option>
+              <option value="4">4 Guests</option>
             </select>
           </div>
 
@@ -116,13 +123,13 @@
       </div>
     </div>
 
-    <!-- Property Info & Payment Card - Now at the bottom -->
+    <!-- Property Info & Payment Card -->
     <div class="w-full mobile-order-2">
       <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden mb-8">
         <!-- Image with fixed height -->
         <div class="home-img-wrapper">
           <img 
-            src="/<%= home.photo%>" 
+            src="/<%= home.photo %>" 
             alt="<%= home.houseName %>"
             onerror="this.onerror=null; this.src='https://placehold.co/600x400/f3f4f6/990000?text=<%= encodeURIComponent(home.houseName) %>&font=montserrat';"
           >
@@ -131,30 +138,31 @@
         <div class="p-6">
           <h3 class="font-bold text-gray-800 text-lg mb-1"><%= home.houseName %></h3>
           <p class="text-sm text-gray-500 mb-4 flex items-center">
-            <svg class="w-4 h-4 mr-1 text-crimson" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+            <svg class="w-4 h-4 mr-1 text-crimson" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            </svg>
             <%= home.location %>
           </p>
 
           <div class="space-y-3 pt-4 border-t border-gray-100">
             <div class="flex justify-between text-sm">
               <span class="text-gray-500">Price per night</span>
-              <span class="font-semibold text-gray-800">₹<%= home.price %></span>
+              <span class="font-semibold text-gray-800">₹<span id="pricePerNight"><%= home.price %></span></span>
             </div>
             <div class="flex justify-between text-sm">
               <span class="text-gray-500">Service fee (15%)</span>
-              <span class="font-semibold text-gray-800">₹<%= (home.price * 0.15).toFixed(0) %></span>
+              <span class="font-semibold text-gray-800">₹<span id="serviceFee"><%= (home.price * 0.15).toFixed(0) %></span></span>
             </div>
           </div>
 
           <div class="ticket-border mt-6 pt-6 flex justify-between items-center mb-6">
             <span class="text-lg font-black text-gray-900">Total (INR)</span>
-            <span class="text-2xl font-black text-crimson">₹<%= (home.price * 1.15).toFixed(0) %></span>
+            <span class="text-2xl font-black text-crimson">₹<span id="totalPrice"><%= (home.price * 1.15).toFixed(0) %></span></span>
           </div>
 
           <button
             id="payBtn"
-            data-upi="upi://pay?pa=surendarpurohit152-1@okhdfcbank&pn=Surendar%20Purohit&am=<%= (home.price * 1.15).toFixed(0) %>&cu=INR&tn=StayAt<%= home.houseName.replace(/\s/g, '') %>"
-            class="w-full bg-[#990000] text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all hover:bg-[#880000]"
+            class="w-full bg-[#990000] text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all hover:bg-[#880000] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span id="payText">Confirm and Pay</span>
             <svg id="spinner" class="hidden w-6 h-6 animate-spin" viewBox="0 0 24 24">
@@ -176,6 +184,25 @@
     const text = document.getElementById("payText");
     const spinner = document.getElementById("spinner");
     const bookingForm = document.getElementById("bookingForm");
+    const checkInInput = document.getElementById("checkIn");
+    const checkOutInput = document.getElementById("checkOut");
+    const guestsSelect = document.getElementById("guests");
+    const pricePerNightEl = document.getElementById("pricePerNight");
+    const serviceFeeEl = document.getElementById("serviceFee");
+    const totalPriceEl = document.getElementById("totalPrice");
+    const totalPriceInput = document.getElementById("totalPriceInput");
+
+    // UPI Payment Configuration - Multiple UPI IDs
+    const upiIDs = [
+      "surendarpurohit152-1@okhdfcbank",
+      "surendarpurohit152-1@oksbi", 
+      "surendarpurohit152-1@okicici"
+    ];
+    const payeeName = "Surendar Purohit";
+    
+    // Payment state tracking
+    let isProcessingPayment = false;
+    let paymentStartTime = null;
 
     // Set default dates (today and tomorrow)
     const today = new Date();
@@ -188,9 +215,6 @@
     };
     
     // Set default check-in and check-out dates
-    const checkInInput = document.querySelector('input[name="checkIn"]');
-    const checkOutInput = document.querySelector('input[name="checkOut"]');
-    
     if (checkInInput && !checkInInput.value) {
       checkInInput.value = formatDate(today);
       checkInInput.min = formatDate(today);
@@ -202,7 +226,7 @@
     }
     
     // Update check-out min date when check-in changes
-    checkInInput?.addEventListener('change', function() {
+    checkInInput.addEventListener('change', function() {
       const checkInDate = new Date(this.value);
       const nextDay = new Date(checkInDate);
       nextDay.setDate(checkInDate.getDate() + 1);
@@ -213,12 +237,288 @@
       if (currentCheckOut < nextDay) {
         checkOutInput.value = formatDate(nextDay);
       }
+      
+      updateTotalPrice();
     });
 
-    payBtn.addEventListener("click", function (e) {
+    checkOutInput.addEventListener('change', updateTotalPrice);
+    guestsSelect.addEventListener('change', updateTotalPrice);
+
+    // Calculate and update total price based on dates and guests
+    function updateTotalPrice() {
+      try {
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+        
+        if (checkIn && checkOut && checkOut > checkIn) {
+          const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+          const pricePerNight = parseFloat(pricePerNightEl.textContent);
+          const guests = parseInt(guestsSelect.value);
+          
+          // Calculate base price (price per night * nights)
+          const basePrice = pricePerNight * nights;
+          
+          // Calculate service fee (15%)
+          const serviceFee = basePrice * 0.15;
+          
+          // Calculate total
+          const total = basePrice + serviceFee;
+          
+          // Update display
+          pricePerNightEl.textContent = pricePerNight.toFixed(0);
+          serviceFeeEl.textContent = serviceFee.toFixed(0);
+          totalPriceEl.textContent = total.toFixed(0);
+          
+          // Update hidden input for form submission
+          totalPriceInput.value = total.toFixed(0);
+        }
+      } catch (error) {
+        console.error('Error calculating price:', error);
+      }
+    }
+
+    // Initialize price calculation
+    updateTotalPrice();
+
+    // Function to generate UPI links for all IDs
+    function generateUPILinks() {
+      const homeName = "<%= home.houseName %>".replace(/\s/g, '');
+      const totalAmount = totalPriceInput.value;
+      
+      const links = upiIDs.map(upiId => {
+        return `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${totalAmount}&cu=INR&tn=StayAt${homeName}&mc=0000`;
+      });
+      
+      return links;
+    }
+
+    // Function to show payment animation
+    function showPaymentAnimation() {
+      text.textContent = "Preparing Payment...";
+      spinner.classList.remove("hidden");
+      payBtn.disabled = true;
+      payBtn.classList.add('opacity-70');
+    }
+
+    // Function to show UPI redirect animation
+    function showUPIRedirectAnimation() {
+      let dots = 1;
+      const interval = setInterval(() => {
+        text.textContent = "Opening UPI App" + ".".repeat(dots);
+        dots = dots % 3 + 1;
+      }, 500);
+      
+      return interval;
+    }
+
+    // Function to show booking success
+    function showBookingSuccess() {
+      text.textContent = "✓ Booking Successful!";
+      spinner.classList.add("hidden");
+      payBtn.classList.remove('opacity-70');
+      payBtn.style.backgroundColor = "#10B981"; // Green color for success
+    }
+
+    // Function to show payment failed
+    function showPaymentFailed() {
+      text.textContent = "Payment Failed - Try Again";
+      spinner.classList.add("hidden");
+      payBtn.disabled = false;
+      payBtn.classList.remove('opacity-70');
+      isProcessingPayment = false;
+    }
+
+    // Function to submit booking to server
+    async function submitBooking(formData) {
+      try {
+        const response = await fetch(bookingForm.action, {
+          method: 'POST',
+          body: formData
+        });
+
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          const result = await response.json();
+          
+          if (result.success) {
+            // Redirect to bookings page after 3 seconds
+            setTimeout(() => {
+              window.location.href = result.redirectUrl || '/bookings';
+            }, 3000);
+            return true;
+          } else {
+            throw new Error(result.message || 'Booking failed');
+          }
+        } else {
+          // If HTML response, assume redirect
+          window.location.href = '/bookings';
+          return true;
+        }
+      } catch (error) {
+        console.error('Booking submission error:', error);
+        showPaymentFailed();
+        alert('Booking failed: ' + error.message);
+        return false;
+      }
+    }
+
+    // Function to open UPI app
+    function openUPIApp() {
+      const upiLinks = generateUPILinks();
+      
+      // Try to open UPI app
+      const timeout = setTimeout(() => {
+        // If UPI app doesn't open, show payment options
+        showPaymentOptions();
+      }, 2000);
+      
+      // Try first UPI ID (HDFC)
+      window.location.href = upiLinks[0];
+      
+      // Store payment start time
+      paymentStartTime = Date.now();
+      
+      // Set timeout to detect if user didn't go to UPI app
+      setTimeout(() => {
+        if (isProcessingPayment && (Date.now() - paymentStartTime < 10000)) {
+          // User might still be in UPI app, wait longer
+          console.log('Still waiting for payment...');
+        }
+      }, 5000);
+    }
+
+    // Function to show payment options if UPI app doesn't open
+    function showPaymentOptions() {
+      const upiLinks = generateUPILinks();
+      const homeName = "<%= home.houseName %>";
+      const totalAmount = totalPriceInput.value;
+      
+      const paymentMessage = `Pay ₹${totalAmount} for ${homeName}\n\n`;
+      const upiOptions = upiLinks.map((link, index) => {
+        const bankName = ['HDFC Bank', 'SBI', 'ICICI'][index];
+        return `${index + 1}. ${bankName}: ${upiIDs[index]}`;
+      }).join('\n');
+      
+      const fullMessage = paymentMessage + upiOptions + '\n\nOr scan QR code below:';
+      
+      // Show payment details
+      alert(fullMessage);
+      
+      // Generate QR code placeholder (you can use a QR code library for real QR)
+      showQRCodePlaceholder();
+      
+      // Continue with booking after showing options
+      continueBookingAfterPayment();
+    }
+
+    // Function to show QR code placeholder
+    function showQRCodePlaceholder() {
+      // Create QR code display
+      const qrContainer = document.createElement('div');
+      qrContainer.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;">
+          <h3>Scan QR Code to Pay</h3>
+          <div style="width: 200px; height: 200px; background: white; margin: 20px; display: flex; align-items: center; justify-content: center; color: black;">
+            <div style="text-align: center;">
+              <div style="font-size: 12px; margin-bottom: 10px;">UPI QR Code</div>
+              <div style="font-size: 10px;">Amount: ₹${totalPriceInput.value}</div>
+              <div style="font-size: 8px; margin-top: 5px;">(QR Code Display)</div>
+            </div>
+          </div>
+          <button id="closeQR" style="padding: 10px 20px; background: #990000; color: white; border: none; border-radius: 5px; margin-top: 20px; cursor: pointer;">
+            I've Made Payment
+          </button>
+          <button id="cancelQR" style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer;">
+            Cancel
+          </button>
+        </div>
+      `;
+      
+      document.body.appendChild(qrContainer);
+      
+      // Add event listeners
+      document.getElementById('closeQR').addEventListener('click', () => {
+        document.body.removeChild(qrContainer);
+        continueBookingAfterPayment();
+      });
+      
+      document.getElementById('cancelQR').addEventListener('click', () => {
+        document.body.removeChild(qrContainer);
+        showPaymentFailed();
+      });
+    }
+
+    // Function to continue booking after payment
+    async function continueBookingAfterPayment() {
+      // Show processing animation
+      text.textContent = "Verifying Payment...";
+      
+      // Simulate payment verification delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Submit the booking
+      const formData = new FormData(bookingForm);
+      const bookingSuccessful = await submitBooking(formData);
+      
+      if (bookingSuccessful) {
+        showBookingSuccess();
+      }
+    }
+
+    // Function to check if user returned from UPI app
+    function checkReturnFromUPI() {
+      const paymentStarted = sessionStorage.getItem('paymentStarted');
+      
+      if (paymentStarted === 'true') {
+        console.log('User returned from UPI payment');
+        
+        // Clear the session storage
+        sessionStorage.removeItem('paymentStarted');
+        
+        // Show success animation
+        showBookingSuccess();
+        
+        // Submit the booking
+        const formData = new FormData(bookingForm);
+        submitBooking(formData);
+        
+        return true;
+      }
+      return false;
+    }
+
+    // Check on page load if user returned from UPI
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (checkReturnFromUPI()) {
+          console.log('Payment return detected');
+        }
+      }, 1000);
+    });
+
+    // Also check on visibility change (when tab becomes active again)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        setTimeout(() => {
+          if (checkReturnFromUPI()) {
+            console.log('Tab focus return detected');
+          }
+        }, 500);
+      }
+    });
+
+    // Main payment button click handler
+    payBtn.addEventListener("click", async function (e) {
+      e.preventDefault();
+      
+      if (isProcessingPayment) return;
+      isProcessingPayment = true;
+      
       // Validate form first
       if(!bookingForm.checkValidity()) {
         bookingForm.reportValidity();
+        isProcessingPayment = false;
         return;
       }
 
@@ -226,43 +526,47 @@
       const checkIn = new Date(checkInInput.value);
       const checkOut = new Date(checkOutInput.value);
       
-      
-      setTimeout(() => {
-    window.location.href = payBtn.href;
-  }, 4000);
-      // UI processing state
-      payBtn.disabled = true;
-      payBtn.classList.add('opacity-80');
-      text.textContent = "Opening UPI Apps...";
-      spinner.classList.remove("hidden");
-      
-      // Save form data to session so we can submit it when user returns
-      const formData = new FormData(bookingForm);
-      const data = Object.fromEntries(formData.entries());
-      sessionStorage.setItem("pendingBooking", JSON.stringify(data));
-      sessionStorage.setItem("paymentStarted", "true");
-
-      // Open UPI
-      window.location.href = payBtn.getAttribute('data-upi');
       if (checkOut <= checkIn) {
         alert("Check-out date must be after check-in date");
         checkOutInput.focus();
+        isProcessingPayment = false;
         return;
       }
+
+      // Check if check-in is in the future
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      
+      if (checkIn <= now) {
+        alert("Check-in date must be in the future");
+        checkInInput.focus();
+        isProcessingPayment = false;
+        return;
+      }
+
+      // Step 1: Show payment animation
+      showPaymentAnimation();
+      
+      // Step 2: Store payment state in session storage
+      sessionStorage.setItem('paymentStarted', 'true');
+      
+      // Step 3: Show UPI redirect animation
+      const animationInterval = showUPIRedirectAnimation();
+      
+      // Step 4: Wait 2 seconds then open UPI app
+      setTimeout(() => {
+        clearInterval(animationInterval);
+        openUPIApp();
+      }, 2000);
     });
 
-    // Detect return to browser
-    document.addEventListener("visibilitychange", () => {
-      if (
-        document.visibilityState === "visible" &&
-        sessionStorage.getItem("paymentStarted") === "true"
-      ) {
-        sessionStorage.removeItem("paymentStarted");
-        
-        // Finalize the booking by submitting the hidden form
-        bookingForm.submit();
+    // Optional: Add a fallback timer in case UPI doesn't work
+    setTimeout(() => {
+      if (isProcessingPayment && sessionStorage.getItem('paymentStarted') === 'true') {
+        console.log('Payment seems stuck, showing manual options');
+        showPaymentOptions();
       }
-    });
+    }, 10000); // 10 second fallback
   </script>
 </body>
 </html>

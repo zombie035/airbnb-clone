@@ -1,6 +1,8 @@
 const Home = require("../models/home");
 const User = require("../models/user");
 // Assuming you have a Booking model or a way to store bookings in your User model
+const mongoose = require('mongoose'); // Add at top of file
+const Booking = require("../models/booking"); // Add this import
 
 exports.getReserve = async (req, res, next) => {
   const homeId = req.params.homeId;
@@ -139,38 +141,108 @@ exports.getHomeDetails = (req, res, next) => {
   });
 };
 
+
 exports.postConfirmBooking = async (req, res, next) => {
+  console.log('=== POST /confirm-booking called ===');
+  console.log('Request body:', req.body);
+  console.log('Session user:', req.session.user);
+  
   try {
-    // 1. Auth Check: Ensure user is logged in
+    // 1. Auth Check
     if (!req.session.user) {
-      return res.redirect('/login');
+      console.log('No user session');
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Please login first' 
+      });
     }
 
-    const homeId = req.body.homeId;
+    const { homeId, checkIn, checkOut, guests, totalPrice } = req.body;
     const userId = req.session.user._id;
 
-    // 2. Fetch the User Document from MongoDB
-    const user = await User.findById(userId);
+    // 2. Validate required fields
+    if (!homeId || !checkIn || !checkOut || !guests || !totalPrice) {
+      console.log('Missing required fields');
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please fill all required fields' 
+      });
+    }
+
+    // 3. Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(homeId)) {
+      console.log('Invalid homeId:', homeId);
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid home ID' 
+      });
+    }
+
+    // 4. Find the home
+    const home = await Home.findById(homeId);
+    if (!home) {
+      console.log('Home not found');
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Home not found' 
+      });
+    }
+
+    // 5. Validate dates
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    const now = new Date();
     
-    // 3. Add the booking to the user's list
-    user.bookings.push({
+    if (checkInDate <= now) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Check-in date must be in the future' 
+      });
+    }
+
+    if (checkOutDate <= checkInDate) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Check-out must be after check-in' 
+      });
+    }
+
+    // 6. Calculate nights
+    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+
+    // 7. Create booking using Booking model
+    const booking = new Booking({
       home: homeId,
-      date: new Date()
+      user: userId,
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
+      guests: parseInt(guests),
+      totalPrice: parseFloat(totalPrice),
+      status: 'confirmed'
+    });
+
+    console.log('Booking object created:', booking);
+
+    // 8. Save booking
+    await booking.save();
+    
+    console.log('Booking saved successfully. ID:', booking._id);
+
+    // 9. Return JSON success response
+    return res.status(200).json({ 
+      success: true,
+      message: 'Booking confirmed successfully',
+      bookingId: booking._id,
+      redirectUrl: '/bookings'
     });
     
-    // 4. SAVE to MongoDB (Critical: Wait for this to finish)
-    await user.save();
-
-    // 5. Update the session to keep the UI in sync
-    req.session.user = user; 
-
-    // 6. Redirect ONLY after success
-    res.redirect('/bookings');
-    
   } catch (err) {
-    console.error("Error confirming booking:", err);
-    // If error, go back to reserve page so user can try again
-    res.redirect('/reserve/' + req.body.homeId);
+    console.error("ERROR in postConfirmBooking:", err);
+    
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Server error: ' + err.message 
+    });
   }
 };
 

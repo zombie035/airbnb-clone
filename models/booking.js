@@ -1,34 +1,60 @@
-const fs = require("fs");
-const path = require("path");
-const rootDir = require("../utils/pathUtil");
+const mongoose = require('mongoose');
 
-const bookingDataPath = path.join(rootDir, "data", "bookings.json");
-
-module.exports = class Booking {
-  constructor(homeId, checkIn, checkOut, guests) {
-    this.homeId = homeId;
-    this.checkIn = checkIn;
-    this.checkOut = checkOut;
-    this.guests = guests;
-    this.id = Math.random().toString();
+const bookingSchema = mongoose.Schema({
+  home: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Home',
+    required: true
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  checkIn: {
+    type: Date,
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value > new Date(); // Check-in must be in future
+      },
+      message: 'Check-in date must be in the future'
+    }
+  },
+  checkOut: {
+    type: Date,
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value > this.checkIn; // Check-out after check-in
+      },
+      message: 'Check-out must be after check-in'
+    }
+  },
+  guests: {
+    type: Number,
+    required: true,
+    min: [1, 'At least 1 guest required'],
+    max: [20, 'Maximum 20 guests allowed']
+  },
+  totalPrice: {
+    type: Number,
+    required: true,
+    min: [0, 'Price cannot be negative']
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'confirmed', 'cancelled', 'completed'],
+    default: 'pending'
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
+});
 
-  save(callback) {
-    fs.readFile(bookingDataPath, (err, data) => {
-      let bookings = [];
-      if (!err && data.length > 0) {
-        bookings = JSON.parse(data);
-      }
-      bookings.push(this);
-      fs.writeFile(bookingDataPath, JSON.stringify(bookings), (error) => {
-        callback(error);
-      });
-    });
-  }
+// Add index for faster queries
+bookingSchema.index({ home: 1, checkIn: 1, checkOut: 1 });
+bookingSchema.index({ user: 1, createdAt: -1 });
 
-  static fetchAll(callback) {
-    fs.readFile(bookingDataPath, (err, data) => {
-      callback(!err && data.length > 0 ? JSON.parse(data) : []);
-    });
-  }
-};
+module.exports = mongoose.model('Booking', bookingSchema);

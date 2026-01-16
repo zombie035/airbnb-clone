@@ -50,7 +50,7 @@ exports.postSignup = [
   .withMessage("Password should contain atleast one lowercase letter")
   .matches(/[0-9]/)
   .withMessage("Password should contain atleast one number")
-  .matches(/[!@&]/)
+  .matches(/[!@#$%^&*()-_=+"'<>,.?/]/)
   .withMessage("Password should contain atleast one special character")
   .trim(),
 
@@ -150,4 +150,4 @@ exports.postLogout = (req, res, next) => {
   req.session.destroy(() => {
     res.redirect("/login");
   })
-}
+  }

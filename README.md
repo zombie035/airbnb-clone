@@ -112,6 +112,7 @@ MVC Architecture
 
 📂 Project Structure
 
+```
 project/
 │
 ├── controllers/
@@ -162,7 +163,7 @@ project/
 ├── app.js
 ├── package.json
 └── nodemon.json
-
+```
 
 ---
 
